@@ -1,6 +1,6 @@
 #! /usr/env/python
 # coding: utf-8
-
+import sys, traceback
 import requests
 import re
 try:
@@ -32,13 +32,17 @@ def score():
     """
     try:
         string = ''
-        page = "http://asis-ctf.ir/contestants/"
-        resultat = requests.get(page).content.split("<tr>")
+        page = "https://ctf.hackover.de/ranking"
+        p = re.compile(ur'<td>(.*?)<.*?France<\/td><td>(.*?)<')
+        resultat = requests.get(page,verify=False).content.replace("\n", "").replace(" ", "").split("<tr>")
+        print resultat
+
         for i in resultat:
             if 'Tontons' in i:
-                string = i.replace("\n", "")
-                return "ctf: >" + string.strip() + "< !"  # string  # Classement: " # + a.group(1) + " avec " + a.group(2) + "points"
+                a = re.search(p, i)
+                return "Classement: " + a.group(1) + "èmes avec " + a.group(2) + " points!"
     except:
+        traceback.print_exc(file=sys.stdout)
         return "failure"
 
 

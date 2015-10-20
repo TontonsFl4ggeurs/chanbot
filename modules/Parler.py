@@ -3,6 +3,7 @@
 import sys, traceback
 import requests
 import re
+import string
 try:
     from bs4 import BeautifulSoup
 except:
@@ -10,43 +11,53 @@ except:
 
 
 def apero():
+    """
+    take the content of the website and print it on the chan
+    """
     page = "http://estcequecestbientotlapero.fr"
-    resultat = BeautifulSoup(requests.get(page).text)
+    resultat = BeautifulSoup(requests.get(page).text, "lxml")
     return resultat.h2.text.encode('utf-8').replace(".", ". ").strip()
 
 
 def weekend():
-    # TODO verify the format of this site
+    """
+    take the content of the website and print it on the chan
+    """
     page = "http://estcequecestbientotleweekend.fr"
-    resultat = requests.get(page).text
-    try:
-        return re.search('<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
-    except:
-        print "exception"  # print stacktrace
-        return "Une erreur s'est produite"
+    resultat = requests.get(page).text.encode('utf-8')
+    return re.search(ur'<p class="msg">(.*?)</p>', resultat, re.DOTALL).group(1).strip()
 
 
-def score():
+def score(team='Tontons'):
     """
     This class has to be changed before each new ctf.
+    get param: page and verify=False for corrupted ssl certs
     """
     try:
-        string = ''
-        page = "https://ctf.hackover.de/ranking"
-        p = re.compile(ur'<td>(.*?)<.*?France<\/td><td>(.*?)<')
-        resultat = requests.get(page,verify=False).content.replace("\n", "").replace(" ", "").split("<tr>")
-        print resultat
-
+        page = "https://school.fluxfingers.net/scoreboard"
+        p = re.compile(ur'number">(.*?)<.*>(.*?)<\/a.*number">(.*?)<\/td><\/tr>')
+        resultat = requests.get(page).content.replace("\n", "").replace(" ", "").split("<tr")
         for i in resultat:
-            if 'Tontons' in i:
+            if team.lower() in i.lower():
+                print i
                 a = re.search(p, i)
-                return "Classement: " + a.group(1) + "èmes avec " + a.group(2) + " points!"
+                b = int(a.group(1))
+                string = "Classement: " + a.group(2) + " " + str(b)
+                if b == 1:
+                    string += "ers avec "
+                else:
+                    string += "èmes avec "
+
+                return string + a.group(3) + " points!"
     except:
         traceback.print_exc(file=sys.stdout)
         return "failure"
 
 
 def ctf():
+    """
+    returns a list of ctfs
+    """
     try:
         page = "https://ctftime.org/event/list/upcoming/rss/"
         p = re.compile(ur'<item><title>(.*?)<.*?Date(.*?)\&.*?sh;(.*?) &.*?at: (.*?)&lt.*?b&gt;(.*?)&.*?href="(.*?)"')
@@ -57,7 +68,7 @@ def ctf():
         while liste:
             compteur += 1
             elt = liste.pop(0)
-            line = "\033[01;31m" + elt[0] + "\033[0m Dates\033[00;34m" + elt[1]
+            line = "\33[01;31m" + elt[0] + "\33[0m Dates\33[00;34m" + elt[1]
             line += "-" + elt[2] + "\033[0m type: \033[02;34m" + elt[3] + " "
             line += elt[4] + ".\033[0m Site web: \033[01;35m" + elt[5]
             string.append(line)
@@ -65,4 +76,5 @@ def ctf():
                 break
         return string
     except:
+        traceback.print_exc(file=sys.stdout)
         return "failure"

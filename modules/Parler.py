@@ -39,7 +39,6 @@ def score(team='Tontons'):
         resultat = requests.get(page).content.replace("\n", "").replace(" ", "").split("<tr")
         for i in resultat:
             if team.lower() in i.lower():
-                print i
                 a = re.search(p, i)
                 b = int(a.group(1))
                 string = "Classement: " + a.group(2) + " " + str(b)

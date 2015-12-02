@@ -82,8 +82,9 @@ def public(client, serv, ev):
             logs("Received '" + message + "' from: '" + auteur)
     else:
         parse = message.split(' ')
-        if parse[0] == '!score':
+        if parse[0] in ['!score','!s','!last','!lastflag', '!chall', '!challenges']:
             if len(parse) >= 2:
+                serv.privmsg("BotRSS", message)
                 serv.privmsg("BotInfo", message)
             else:
                 serv.privmsg("BotInfo", parse[0] + " " + auteur)

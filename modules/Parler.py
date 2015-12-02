@@ -65,11 +65,13 @@ def ctf():
         compteur = 0
         string = []
         while liste:
-            compteur += 1
             elt = liste.pop(0)
-            line = "\33[01;31m" + elt[0] + "\33[0m Dates\33[00;34m" + elt[1]
-            line += "-" + elt[2] + "\033[0m type: \033[02;34m" + elt[3] + " "
-            line += elt[4] + ".\033[0m Site web: \033[01;35m" + elt[5]
+            if "On-site" in elt[4]:
+                continue
+            compteur += 1
+            line = "\x0304" + elt[0] + "\x03 Dates\x0302" + elt[1]
+            line += "-" + elt[2] + "\x03 type: \x0302" + elt[3]
+            line += "\x03 Site web: \x0303" + elt[5] + "\x03"
             string.append(line)
             if compteur == 5:
                 break

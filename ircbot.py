@@ -43,8 +43,7 @@ class Bot(ircbot.SingleServerIRCBot):
             serv.privmsg(canal, message)
             logs("Message '" + message + "' transfered to '" + canal + "'")
 
-        elif auteur == "BotInfo":
-            print "sending", message
+        elif auteur == "BotInfo" or auteur == "BotRSS" :
             serv.privmsg(canal, message)
         else:
             serv.privmsg(auteur, "bonjour, merci de m'envoyer des messages privés")
@@ -54,6 +53,7 @@ class Bot(ircbot.SingleServerIRCBot):
         auteur = irclib.nm_to_n(ev.source())
         canal = ev.target()
         message = ev.arguments()[0]
+        print message
         if "!reload" in message and auteur in admin:
             reload(Mod)
             reload(Interact)
@@ -67,61 +67,6 @@ class Bot(ircbot.SingleServerIRCBot):
         log_file.close()
         serv.disconnect()
         self.die()
-
-#    def public(self, serv, ev):
-#        auteur = irclib.nm_to_n(ev.source())
-#        canal = ev.target()
-#        message = ev.arguments()[0]
-#        if "!" in message:
-#            serv.privmsg("BotInfo", message)
-#
-#        if "!apero" in message:
-#            logs("Requested Apero", auteur)
-#            try:
-#                serv.privmsg(canal, Mod.apero())
-#                logs("Command answered")
-#            except:
-#                serv.privmsg(canal, "Je n'ai pas pu récupérer correctement l'info, mais vous pouvez la trouver sur ce site: http://estcequecestlapero.fr")
-#                logs("Command unsuccessful", author=auteur, info="WARN")
-#        elif "!weekend" in message:
-#            try:
-#                logs("requested Weekend", auteur)
-#                serv.privmsg(canal, Mod.weekend())
-#            except:
-#                logs("Failure!", info="Debug")
-#                serv.privmsg(canal, "marche pas :(")
-#        elif message == "!ctfs":
-#            liste = Mod.ctf()
-#            for elt in liste:
-#                serv.privmsg(canal, elt)
-#        elif "!help" == message:
-#            logs("Requested Help from: '" + auteur)
-#            serv.privmsg(canal, "!help !ctf !ctfs !reload !apero !weekend")
-#        elif "!ctf" == message.split(" ")[0]:
-#            logs("Requested ctf score")
-#            try:
-#                serv.privmsg(canal, Mod.score(message.split(" ")[1]))
-#            except:
-#                serv.privmsg(canal, Mod.score())
-#        elif robNick in message:
-#            if "stop" in message:
-#                if auteur in admin:
-#                    logs("Received message '" + message + "' from '" + auteur + "' on '" + canal + "'")
-#                    self.on_close(serv, canal, auteur)
-#                else:
-#                    serv.privmsg(canal, "Méchant " + auteur + " tu voulais me faire partir?")
-#                    logs("sent stop signal!", auteur, "\33[01;31mWARN\33[0m")
-#            elif "bonjour" in message:
-#                logs("Received Bonjour from: '" + auteur)
-#                serv.privmsg(canal, "bonjour " + auteur)
-#            elif "!reload" in message and auteur in admin:
-#                logs("Requested reload")
-#                reload(Mod)
-#                serv.privmsg(canal, "rechargement de mes facultés")
-#            else:
-#                logs("Received '" + message + "' from: '" + auteur)
-#        else:
-#            logs(message, auteur)
 
 
 def logs(message, author="", info="info"):

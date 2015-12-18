@@ -4,6 +4,8 @@ import sys, traceback
 import requests
 import re
 import string
+from random import randint
+
 try:
     from bs4 import BeautifulSoup
 except:
@@ -18,6 +20,26 @@ def apero():
     resultat = BeautifulSoup(requests.get(page).text, "lxml")
     return resultat.h2.text.encode('utf-8').replace(".", ". ").strip()
 
+def choosechall(nick):
+    if nick == "ghozt":
+        nick = "Ghozt-30087"
+    p = re.compile(ur'class="rouge".*?href="(.*?)".*?"(.*?)".*?;(.*?)<')
+
+    page = "http://www.root-me.org/" + nick + "?inc=score&lang=fr"
+    resultat = requests.get(page).text.encode('utf-8')
+    result = ""
+    try:
+        liste = re.findall(p, resultat)
+        size = len(liste)
+        if size != 0:
+            random = randint(0, size - 1)
+            print random
+            result = liste[random][2] + " (" + liste[random][1] + ") Lien: http://www.root-me.org/" + liste[random][0]
+        else:
+            result = "No more challenges availables"
+    except:
+        result = "This challenger doesn't exist"
+    return result
 
 def weekend():
     """

@@ -81,16 +81,25 @@ def public(client, serv, ev):
         else:
             logs("Received '" + message + "' from: '" + auteur)
     else:
-        parse = message.split(' ')
+        parse = message.strip().split(' ')
+        print parse
         if parse[0] in ['!score','!s','!last','!lastflag', '!chall', '!challenges']:
             if len(parse) >= 2:
                 serv.privmsg("BotRSS", message)
                 serv.privmsg("BotInfo", message)
             else:
                 serv.privmsg("BotInfo", parse[0] + " " + auteur)
+        elif "!choosechall" == parse[0]:
+            nick = auteur
+            if len(parse) >= 2:
+                nick = parse[1]
+            serv.privmsg(canal, Mod.choosechall(nick))
         elif len(parse) == 3 and parse[0] == "kick" and parse[2] == "please":
             serv.privmsg(canal, "Yes Master!")
-            serv.kick(canal, parse[1], "haha")
+            if parse[1] in admin:
+                serv.kick(canal, auteur, "Héhé, DTC")
+            else:
+                serv.kick(canal, parse[1], "haha")
 
 
 def logs(message, author="", info="info"):
